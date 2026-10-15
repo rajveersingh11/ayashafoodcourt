@@ -4,7 +4,7 @@ import { useCart } from '../context/CartContext';
 import { RESTAURANT_INFO } from '../data/menuData';
 import UpiPaymentModal from './UpiPaymentModal';
 
-export default function CartDrawer() {
+export default function CartDrawer({ onOrderSuccess = () => {} }) {
   const [isUpiModalOpen, setIsUpiModalOpen] = useState(false);
   const {
     items,
@@ -258,6 +258,12 @@ export default function CartDrawer() {
                   href={generateWhatsAppLink()}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => {
+                    setTimeout(() => {
+                      setIsCartOpen(false);
+                      onOrderSuccess();
+                    }, 500);
+                  }}
                   className="w-full py-2.5 px-4 rounded-xl font-bold bg-cardamom-600 hover:bg-cardamom-500 text-white flex items-center justify-center gap-2 shadow-sm transition-all text-xs active:scale-95"
                 >
                   <Send className="w-3.5 h-3.5" /> Order via WhatsApp (COD / Pay on Delivery)
@@ -285,6 +291,11 @@ export default function CartDrawer() {
         items={items}
         customerDetails={customerDetails}
         orderType={orderType}
+        onPaymentSuccess={() => {
+          setIsUpiModalOpen(false);
+          setIsCartOpen(false);
+          onOrderSuccess();
+        }}
       />
     </div>
   );

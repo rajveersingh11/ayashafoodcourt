@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { ArrowRight, Sparkles, Check, Phone, ShieldCheck, Flame } from 'lucide-react';
 import ThaliScene from './3d/ThaliScene';
 import { RESTAURANT_INFO } from '../data/menuData';
+import { useLanguage } from '../context/LanguageContext';
 
-export default function Hero({ onSelectHotspot }) {
+export default function Hero({ onSelectHotspot, onOpenTiffin = () => {} }) {
+  const { t, isHindi } = useLanguage();
   const [platterType, setPlatterType] = useState('brass');
   const [autoRotate, setAutoRotate] = useState(true);
 
@@ -18,16 +20,16 @@ export default function Hero({ onSelectHotspot }) {
         <div className="lg:col-span-6 space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cardamom-600/10 border border-cardamom-600/20 text-cardamom-700 text-xs font-extrabold uppercase tracking-widest">
             <span className="w-2 h-2 rounded-full bg-cardamom-600" />
-            Fresh • Homestyle • Pure Vegetarian
+            {t('heroBadge')}
           </div>
 
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-charcoal-900 tracking-tight leading-[1.08]">
-            A little taste of <br className="hidden sm:inline" />
-            <span className="text-crimson-600 italic font-serif">home.</span>
+            {t('heroTitlePart1')} <br className="hidden sm:inline" />
+            <span className="text-crimson-600 italic font-serif">{t('heroTitlePart2')}</span>
           </h1>
 
           <p className="text-muted text-base sm:text-lg leading-relaxed max-w-xl">
-            Comforting Indian meals, puffed tawa rotis, and flavour-packed gravies—prepared homestyle and served with care. Experience our dishes in interactive 3D and order hot to your doorstep in Sector 66, Noida.
+            {t('heroSubtitle')}
           </p>
 
           {/* Action Buttons */}
@@ -37,22 +39,29 @@ export default function Hero({ onSelectHotspot }) {
               className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-crimson-600 hover:bg-crimson-700 text-white font-bold text-sm shadow-warm hover:shadow-warm-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0"
             >
               <Sparkles className="w-4 h-4 text-saffron-400" />
-              Build 3D Thali
+              {t('heroCustomizeBtn')}
             </a>
+
+            <button
+              onClick={onOpenTiffin}
+              className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-cardamom-600 hover:bg-cardamom-500 text-white font-bold text-sm shadow-warm transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <span>🍱 {t('heroDailyTiffinBtn')}</span>
+            </button>
 
             <a
               href="#menu"
               className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-cream-50 hover:bg-cream-200 text-charcoal-900 border border-cream-400 font-bold text-sm shadow-sm transition-all transform hover:-translate-y-0.5"
             >
-              Explore Menu <ArrowRight className="w-4 h-4 text-crimson-600" />
+              {t('fullMenu')} <ArrowRight className="w-4 h-4 text-crimson-600" />
             </a>
 
             <a
               href={`tel:${RESTAURANT_INFO.phone1}`}
-              className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-cardamom-600/10 hover:bg-cardamom-600/20 text-cardamom-700 font-bold text-sm transition-all"
+              className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-cream-200 hover:bg-cream-300 text-charcoal-800 font-bold text-sm transition-all"
             >
-              <Phone className="w-4 h-4 text-cardamom-600" />
-              Call to Order
+              <Phone className="w-4 h-4 text-crimson-600" />
+              {t('callKitchen')}
             </a>
           </div>
 

@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { Sparkles, Eye, Plus, Check, Search } from 'lucide-react';
 import { MENU_CATEGORIES, MENU_ITEMS } from '../data/menuData';
 import { useCart } from '../context/CartContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function MenuSection({ onOpen3DModal, overrides = {} }) {
   const { addToCart } = useCart();
+  const { t, getDishName, isHindi } = useLanguage();
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [portionSelections, setPortionSelections] = useState({});
@@ -39,13 +41,13 @@ export default function MenuSection({ onOpen3DModal, overrides = {} }) {
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-12">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-crimson-600/10 text-crimson-700 text-xs font-bold uppercase tracking-wider mb-3">
-            Fresh From Our Kitchen
+            {t('freshFromKitchen')}
           </div>
           <h2 className="font-serif text-3xl md:text-5xl font-extrabold text-charcoal-900 tracking-tight">
-            Our Everyday <span className="text-crimson-600">Menu</span>
+            {t('ourEverydayMenu')} <span className="text-crimson-600">{t('menuWord')}</span>
           </h2>
           <p className="mt-3 text-muted text-sm md:text-base leading-relaxed">
-            Honest home-style cooking with pure vegetarian ingredients. Click on any 3D badge to inspect dishes in 360-degree 3D view.
+            {t('menuDescription')}
           </p>
         </div>
 
@@ -122,19 +124,40 @@ export default function MenuSection({ onOpen3DModal, overrides = {} }) {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
           {/* Category Tabs */}
           <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 scrollbar-none">
-            {MENU_CATEGORIES.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
-                className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-                  activeCategory === cat.id
-                    ? 'bg-crimson-600 text-white shadow-md'
-                    : 'bg-cream-200 text-charcoal-800 hover:bg-cream-300'
-                }`}
-              >
-                <span className="mr-1">{cat.icon}</span> {cat.name}
-              </button>
-            ))}
+            {MENU_CATEGORIES.map((cat) => {
+              const catLabel =
+                cat.id === 'all'
+                  ? t('allDishes')
+                  : cat.id === 'thalis'
+                  ? t('thalis')
+                  : cat.id === 'curries'
+                  ? t('curries')
+                  : cat.id === 'paneer'
+                  ? t('paneer')
+                  : cat.id === 'breads'
+                  ? t('breads')
+                  : cat.id === 'rice'
+                  ? t('rice')
+                  : cat.id === 'sides'
+                  ? t('sides')
+                  : cat.id === 'sweets'
+                  ? t('sweets')
+                  : cat.name;
+
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+                    activeCategory === cat.id
+                      ? 'bg-crimson-600 text-white shadow-md'
+                      : 'bg-cream-200 text-charcoal-800 hover:bg-cream-300'
+                  }`}
+                >
+                  <span className="mr-1">{cat.icon}</span> {catLabel}
+                </button>
+              );
+            })}
           </div>
 
           {/* Search Box */}
@@ -142,7 +165,7 @@ export default function MenuSection({ onOpen3DModal, overrides = {} }) {
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
             <input
               type="text"
-              placeholder="Search paneer, dal, roti..."
+              placeholder={t('searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-4 py-2 rounded-full bg-cream-50 border border-cream-400 text-xs text-charcoal-900 focus:outline-none focus:border-crimson-600 shadow-sm"
@@ -182,11 +205,11 @@ export default function MenuSection({ onOpen3DModal, overrides = {} }) {
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div>
                       <h4 className="font-serif text-lg font-bold text-charcoal-900 group-hover:text-crimson-600 transition-colors">
-                        {dish.name}
+                        {getDishName(dish)}
                       </h4>
                       {isSoldOut && (
                         <span className="inline-block mt-0.5 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-crimson-600 text-white">
-                          Sold Out Today
+                          {t('soldOut')}
                         </span>
                       )}
                     </div>
@@ -211,7 +234,7 @@ export default function MenuSection({ onOpen3DModal, overrides = {} }) {
                             : 'border-cream-300 text-muted hover:border-cream-400'
                         }`}
                       >
-                        Half (₹{currentHalfPrice})
+                        {t('half')} (₹{currentHalfPrice})
                       </button>
                       <button
                         disabled={isSoldOut}
@@ -222,7 +245,7 @@ export default function MenuSection({ onOpen3DModal, overrides = {} }) {
                             : 'border-cream-300 text-muted hover:border-cream-400'
                         }`}
                       >
-                        Full (₹{currentFullPrice})
+                        {t('full')} (₹{currentFullPrice})
                       </button>
                     </div>
                   )}
@@ -252,14 +275,14 @@ export default function MenuSection({ onOpen3DModal, overrides = {} }) {
                     }`}
                   >
                     {isSoldOut ? (
-                      'Sold Out'
+                      t('soldOut')
                     ) : isAdded ? (
                       <>
-                        <Check className="w-3.5 h-3.5" /> Added
+                        <Check className="w-3.5 h-3.5" /> {isHindi ? 'जोड़ दिया ✓' : 'Added'}
                       </>
                     ) : (
                       <>
-                        <Plus className="w-3.5 h-3.5" /> Add
+                        <Plus className="w-3.5 h-3.5" /> {t('addToCart')}
                       </>
                     )}
                   </button>

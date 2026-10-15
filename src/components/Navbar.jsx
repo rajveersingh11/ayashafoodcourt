@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Phone, Menu, X, Volume2, VolumeX, Sparkles } from 'lucide-react';
+import { ShoppingBag, Phone, Menu, X, Volume2, VolumeX, Sparkles, Languages, Gift, Bike } from 'lucide-react';
 import { RESTAURANT_INFO } from '../data/menuData';
 import { useCart } from '../context/CartContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Navbar({
   isAudioPlaying,
@@ -11,20 +12,32 @@ export default function Navbar({
   onInstallPwa = () => {},
   canInstallPwa = false,
   onOpenCatering = () => {},
+  onOpenTiffin = () => {},
+  onOpenTracker = () => {},
+  onOpenScratchCard = () => {},
 }) {
   const { totalCount, setIsCartOpen } = useCart();
+  const { t, isHindi, toggleLanguage } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <>
       {/* Top Banner Bar */}
-      <div className="bg-charcoal-900 text-cream-100 px-4 md:px-8 py-2 text-xs flex justify-between items-center border-b border-saffron-500/20">
+      <div className="bg-charcoal-900 text-cream-100 px-4 md:px-8 py-1.5 text-xs flex justify-between items-center border-b border-saffron-500/20">
         <div className="flex items-center gap-2">
-          <span className="text-saffron-500 font-extrabold tracking-wide">🍃 100% PURE VEGETARIAN</span>
-          <span className="hidden sm:inline text-cream-400/80">· Home-style Indian meals made with care</span>
+          <span className="text-saffron-500 font-extrabold tracking-wide">{t('pureVeg')}</span>
+          <span className="hidden sm:inline text-cream-400/80">· {t('tagline')}</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="hidden md:inline text-cream-400">Mamura Sector 66, Noida</span>
+          <button
+            onClick={toggleLanguage}
+            className="px-2.5 py-0.5 rounded-full bg-saffron-500/20 text-saffron-400 border border-saffron-500 text-[11px] font-black hover:bg-saffron-500/30 transition-all flex items-center gap-1 cursor-pointer"
+            title="Switch Language / भाषा बदलें"
+          >
+            <Languages className="w-3 h-3 text-saffron-400" />
+            <span>{isHindi ? '🇬🇧 English' : '🇮🇳 हिंदी'}</span>
+          </button>
+          <span className="hidden md:inline text-cream-400">{t('locationBanner')}</span>
           <div className="flex items-center gap-1.5 text-saffron-400 font-bold">
             <Phone className="w-3 h-3 text-saffron-500" />
             <a href={`tel:${RESTAURANT_INFO.phone1}`} className="hover:underline">
@@ -47,45 +60,51 @@ export default function Navbar({
                 Ayanshi Food Court
               </div>
               <div className="text-[10px] text-muted tracking-widest uppercase mt-0.5 font-bold">
-                Food like your home · 3D Experience
+                {isHindi ? 'घर जैसा शुद्ध भोजन · 3D अनुभव' : 'Food like your home · 3D Experience'}
               </div>
             </div>
           </a>
 
           {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center gap-6 text-sm font-bold text-charcoal-800">
+          <div className="hidden lg:flex items-center gap-5 text-sm font-bold text-charcoal-800">
             <a href="#home" className="hover:text-crimson-600 transition-colors">
-              Home
+              {t('home')}
             </a>
             <button
               onClick={onOpenMatcher}
               className="flex items-center gap-1.5 text-crimson-700 hover:text-crimson-600 transition-colors"
             >
-              <Sparkles className="w-3.5 h-3.5 text-saffron-600" /> AI Matcher
+              <Sparkles className="w-3.5 h-3.5 text-saffron-600" /> {t('aiMatcher')}
             </button>
             <a href="#customizer" className="hover:text-crimson-600 transition-colors">
-              3D Thali Studio
+              {t('thaliStudio')}
             </a>
             <button
               onClick={onOpenAR}
               className="flex items-center gap-1.5 text-cardamom-700 hover:text-cardamom-600 transition-colors"
             >
-              <span>📱 View On Table (AR)</span>
+              <span>{t('viewOnTable')}</span>
+            </button>
+            <button
+              onClick={onOpenTiffin}
+              className="flex items-center gap-1.5 text-cardamom-800 hover:text-cardamom-700 transition-colors"
+            >
+              <span>{t('tiffinClub')}</span>
             </button>
             <button
               onClick={onOpenCatering}
               className="flex items-center gap-1.5 text-crimson-800 hover:text-crimson-600 transition-colors"
             >
-              <span>🏢 Bulk Catering</span>
+              <span>{t('bulkCatering')}</span>
             </button>
-            <a href="#specials" className="hover:text-crimson-600 transition-colors">
-              Specials
-            </a>
+            <button
+              onClick={onOpenTracker}
+              className="flex items-center gap-1 text-saffron-700 hover:text-saffron-600 transition-colors"
+            >
+              <Bike className="w-3.5 h-3.5 text-saffron-600" /> {t('trackOrder')}
+            </button>
             <a href="#menu" className="hover:text-crimson-600 transition-colors">
-              Full Menu
-            </a>
-            <a href="#contact" className="hover:text-crimson-600 transition-colors">
-              Contact & Map
+              {t('fullMenu')}
             </a>
           </div>
 
@@ -123,7 +142,7 @@ export default function Navbar({
               aria-label="View Cart"
             >
               <ShoppingBag className="w-4 h-4" />
-              <span className="hidden sm:inline">My Order</span>
+              <span className="hidden sm:inline">{t('myOrder')}</span>
               {totalCount > 0 && (
                 <span className="w-5 h-5 rounded-full bg-saffron-500 text-charcoal-900 text-xs font-black flex items-center justify-center animate-bounce">
                   {totalCount}
@@ -145,12 +164,24 @@ export default function Navbar({
         {/* Mobile Nav Drawer */}
         {mobileMenuOpen && (
           <div className="lg:hidden bg-cream-50 border-t border-cream-300 px-6 py-4 space-y-3 animate-fade-in shadow-xl">
+            {/* Mobile Language Switcher */}
+            <div className="flex justify-between items-center py-2 border-b border-cream-200">
+              <span className="text-xs font-bold text-muted">Language / भाषा:</span>
+              <button
+                onClick={toggleLanguage}
+                className="px-3 py-1 rounded-full bg-saffron-500/20 text-saffron-600 border border-saffron-500 text-xs font-bold flex items-center gap-1.5"
+              >
+                <Languages className="w-3.5 h-3.5" />
+                <span>{isHindi ? 'Switch to English' : 'हिंदी में बदलें'}</span>
+              </button>
+            </div>
+
             <a
               href="#home"
               onClick={() => setMobileMenuOpen(false)}
               className="block font-bold text-charcoal-800 py-2 border-b border-cream-200"
             >
-              Home
+              {t('home')}
             </a>
             <button
               onClick={() => {
@@ -159,14 +190,14 @@ export default function Navbar({
               }}
               className="w-full text-left font-bold text-crimson-700 py-2 border-b border-cream-200 flex items-center gap-2"
             >
-              <Sparkles className="w-4 h-4 text-saffron-600" /> ✨ AI Craving Matcher
+              <Sparkles className="w-4 h-4 text-saffron-600" /> ✨ {t('aiMatcher')}
             </button>
             <a
               href="#customizer"
               onClick={() => setMobileMenuOpen(false)}
               className="block font-bold text-charcoal-800 py-2 border-b border-cream-200"
             >
-              3D Thali Studio
+              {t('thaliStudio')}
             </a>
             <button
               onClick={() => {
@@ -175,7 +206,16 @@ export default function Navbar({
               }}
               className="w-full text-left font-bold text-cardamom-700 py-2 border-b border-cream-200 flex items-center gap-2"
             >
-              <span>📱 View On Your Table (AR)</span>
+              <span>{t('viewOnTable')}</span>
+            </button>
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenTiffin();
+              }}
+              className="w-full text-left font-bold text-cardamom-800 py-2 border-b border-cream-200 flex items-center gap-2"
+            >
+              <span>{t('tiffinClub')} (Daily Dabba)</span>
             </button>
             <button
               onClick={() => {
@@ -184,7 +224,25 @@ export default function Navbar({
               }}
               className="w-full text-left font-bold text-crimson-800 py-2 border-b border-cream-200 flex items-center gap-2"
             >
-              <span>🏢 Bulk & Corporate Catering</span>
+              <span>{t('bulkCatering')}</span>
+            </button>
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenTracker();
+              }}
+              className="w-full text-left font-bold text-saffron-700 py-2 border-b border-cream-200 flex items-center gap-2"
+            >
+              <Bike className="w-4 h-4 text-saffron-600" /> {t('trackOrder')}
+            </button>
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenScratchCard();
+              }}
+              className="w-full text-left font-bold text-crimson-600 py-2 border-b border-cream-200 flex items-center gap-2"
+            >
+              <Gift className="w-4 h-4 text-saffron-600" /> {isHindi ? '🎁 रसोई रिवॉर्ड्स स्क्रैच कार्ड' : '🎁 Rasoi Rewards Scratch Card'}
             </button>
             {canInstallPwa && (
               <button
@@ -194,7 +252,7 @@ export default function Navbar({
                 }}
                 className="w-full text-left font-bold text-saffron-700 py-2 border-b border-cream-200 flex items-center gap-2"
               >
-                <span>📲 Install Mobile App</span>
+                <span>{t('installApp')}</span>
               </button>
             )}
             <a
@@ -202,21 +260,21 @@ export default function Navbar({
               onClick={() => setMobileMenuOpen(false)}
               className="block font-bold text-charcoal-800 py-2 border-b border-cream-200"
             >
-              Specials
+              {t('specials')}
             </a>
             <a
               href="#menu"
               onClick={() => setMobileMenuOpen(false)}
               className="block font-bold text-charcoal-800 py-2 border-b border-cream-200"
             >
-              Full Menu
+              {t('fullMenu')}
             </a>
             <a
               href="#contact"
               onClick={() => setMobileMenuOpen(false)}
               className="block font-bold text-charcoal-800 py-2"
             >
-              Contact & Map
+              {t('contactMap')}
             </a>
           </div>
         )}

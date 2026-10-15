@@ -12,6 +12,7 @@ export default function UpiPaymentModal({
   items,
   customerDetails,
   orderType,
+  onPaymentSuccess = () => {},
 }) {
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [copied, setCopied] = useState(false);
@@ -78,6 +79,7 @@ export default function UpiPaymentModal({
     const encoded = encodeURIComponent(msg);
     window.open(`https://wa.me/${RESTAURANT_INFO.whatsappNumber}?text=${encoded}`, '_blank');
     onClose();
+    if (onPaymentSuccess) onPaymentSuccess();
   };
 
   return (
