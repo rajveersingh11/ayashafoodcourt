@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -8,6 +8,8 @@ import WhyUsSection from './components/WhyUsSection';
 import ContactSection from './components/ContactSection';
 import CartDrawer from './components/CartDrawer';
 import DishModal3D from './components/3d/DishModal3D';
+import ARViewerModal from './components/3d/ARViewerModal';
+import SmartMealMatcher from './components/SmartMealMatcher';
 import AudioPlayer from './components/AudioPlayer';
 import MobileBottomNav from './components/MobileBottomNav';
 import { MENU_ITEMS } from './data/menuData';
@@ -15,6 +17,34 @@ import { MENU_ITEMS } from './data/menuData';
 export default function App() {
   const [active3DModalDish, setActive3DModalDish] = useState(null);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [isAROpen, setIsAROpen] = useState(false);
+  const [isMatcherOpen, setIsMatcherOpen] = useState(false);
+  const [customizerConfig, setCustomizerConfig] = useState(null);
+
+  // PWA install prompt state
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [canInstallPwa, setCanInstallPwa] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeInstall = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setCanInstallPwa(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+  }, []);
+
+  const handleInstallPwa = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setCanInstallPwa(false);
+    }
+    setDeferredPrompt(null);
+  };
 
   // Handle hotspot clicked on the Hero 3D Thali
   const handleHotspotSelect = (dishKey) => {
@@ -45,17 +75,25 @@ export default function App() {
           onToggle={() => setIsAudioPlaying(!isAudioPlaying)}
         />
 
-        {/* Navigation Bar */}
+        {/* Navigation Bar with AI Matcher, AR and PWA buttons */}
         <Navbar
           isAudioPlaying={isAudioPlaying}
           onToggleAudio={() => setIsAudioPlaying(!isAudioPlaying)}
+          onOpenMatcher={() => setIsMatcherOpen(true)}
+          onOpenAR={() => setIsAROpen(true)}
+          onInstallPwa={handleInstallPwa}
+          canInstallPwa={canInstallPwa}
         />
 
         {/* Hero Section with Interactive 3D Centerpiece */}
         <Hero onSelectHotspot={handleHotspotSelect} />
 
         {/* 3D Thali Customizer Studio */}
-        <ThaliCustomizer />
+        <ThaliCustomizer
+          initialConfig={customizerConfig}
+          onOpenAR={() => setIsAROpen(true)}
+          onOpenMatcher={() => setIsMatcherOpen(true)}
+        />
 
         {/* Full Categorized Menu with 3D Dish Viewers */}
         <MenuSection onOpen3DModal={(dish) => setActive3DModalDish(dish)} />
@@ -76,6 +114,19 @@ export default function App() {
             onClose={() => setActive3DModalDish(null)}
           />
         )}
+
+        {/* Augmented Reality Table View Modal */}
+        <ARViewerModal
+          isOpen={isAROpen}
+          onClose={() => setIsAROpen(false)}
+        />
+
+        {/* Smart AI Meal & Craving Matcher Modal */}
+        <SmartMealMatcher
+          isOpen={isMatcherOpen}
+          onClose={() => setIsMatcherOpen(false)}
+          onLoadTo3D={(config) => setCustomizerConfig(config)}
+        />
 
         {/* Mobile Floating Bottom Bar */}
         <MobileBottomNav />

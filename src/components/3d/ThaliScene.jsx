@@ -123,11 +123,42 @@ export default function ThaliScene({
   onSelectHotspot = () => {},
 }) {
   const [activeSpot, setActiveSpot] = useState(null);
+  const [mood, setMood] = useState('lunch'); // 'lunch' | 'dinner' | 'festive'
 
   const handleSpotClick = (dishId) => {
     setActiveSpot(dishId);
     onSelectHotspot(dishId);
   };
+
+  // Dynamic light colors and intensities per mood
+  const lightingConfigs = {
+    lunch: {
+      ambient: '#fffaf0',
+      ambientIntensity: 1.05,
+      keyColor: '#fff5e6',
+      keyIntensity: 1.9,
+      point1: '#fde047',
+      point2: '#fef08a',
+    },
+    dinner: {
+      ambient: '#fed7aa',
+      ambientIntensity: 0.6,
+      keyColor: '#f97316',
+      keyIntensity: 1.6,
+      point1: '#ea580c',
+      point2: '#fb923c',
+    },
+    festive: {
+      ambient: '#fef08a',
+      ambientIntensity: 0.85,
+      keyColor: '#e11d48',
+      keyIntensity: 1.5,
+      point1: '#f59e0b',
+      point2: '#d97706',
+    },
+  };
+
+  const currentLighting = lightingConfigs[mood];
 
   return (
     <div className="w-full h-full relative cursor-grab active:cursor-grabbing select-none">
@@ -138,18 +169,18 @@ export default function ThaliScene({
         className="w-full h-full"
       >
         <Suspense fallback={null}>
-          {/* Lighting */}
-          <ambientLight intensity={0.9} color="#fff8ed" />
+          {/* Dynamic Studio Lighting */}
+          <ambientLight intensity={currentLighting.ambientIntensity} color={currentLighting.ambient} />
           <directionalLight
             position={[5, 8, 4]}
-            intensity={1.8}
+            intensity={currentLighting.keyIntensity}
             castShadow
             shadow-mapSize={[1024, 1024]}
             shadow-bias={-0.0001}
-            color="#fff2db"
+            color={currentLighting.keyColor}
           />
-          <pointLight position={[-4, 4, -2]} intensity={0.8} color="#f5d0a9" />
-          <pointLight position={[0, 2.5, 2]} intensity={0.7} color="#e6a817" />
+          <pointLight position={[-4, 4, -2]} intensity={0.9} color={currentLighting.point1} />
+          <pointLight position={[0, 2.5, 2]} intensity={0.8} color={currentLighting.point2} />
 
           {/* 3D Model */}
           <ThaliModel
@@ -185,6 +216,43 @@ export default function ThaliScene({
           />
         </Suspense>
       </Canvas>
+
+      {/* Lighting Mood Switcher */}
+      <div className="absolute bottom-12 left-4 flex items-center gap-1 p-1 rounded-full bg-cream-50/90 backdrop-blur-md border border-cream-400 shadow-md">
+        <button
+          onClick={() => setMood('lunch')}
+          className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-all ${
+            mood === 'lunch'
+              ? 'bg-saffron-500 text-charcoal-900 shadow-sm'
+              : 'text-muted hover:text-charcoal-900'
+          }`}
+          title="Bright Lunch Sunlight"
+        >
+          ☀️ Lunch
+        </button>
+        <button
+          onClick={() => setMood('dinner')}
+          className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-all ${
+            mood === 'dinner'
+              ? 'bg-crimson-700 text-white shadow-sm'
+              : 'text-muted hover:text-charcoal-900'
+          }`}
+          title="Candlelit Evening Dinner"
+        >
+          🕯️ Dinner
+        </button>
+        <button
+          onClick={() => setMood('festive')}
+          className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-all ${
+            mood === 'festive'
+              ? 'bg-cardamom-700 text-white shadow-sm'
+              : 'text-muted hover:text-charcoal-900'
+          }`}
+          title="Royal Festive Dhaba"
+        >
+          🏮 Festive
+        </button>
+      </div>
 
       {/* Interactive Helper Overlay */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none flex items-center gap-2 px-3 py-1.5 rounded-full bg-charcoal-900/60 backdrop-blur-md text-cream-100 text-xs shadow-md">

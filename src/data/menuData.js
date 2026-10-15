@@ -357,11 +357,85 @@ export const RESTAURANT_INFO = {
   phone1: '8271754563',
   phone2: '7827798007',
   whatsappNumber: '918271754563',
+  upiId: '8271754563@upi',
+  upiName: 'Ayanshi Food Court',
   deliveryMinOrder: 350,
   freeDeliveryRadiusKm: 2,
   hours: '11:00 AM – 11:00 PM (Daily)',
   googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Gali+No+5+Mamura+Sector+66+Noida',
 };
+
+// Smart AI Meal Matcher Presets
+export const SMART_MEAL_PRESETS = [
+  {
+    id: 'healthy-daily',
+    title: 'Light & Healthy Ghar-Ka-Khana',
+    badge: 'Under 500 kcal',
+    icon: '🌿',
+    tagline: 'Wholesome everyday balanced nutrition',
+    description: 'Yellow Dal Tadka, Seasonal Sabzi, 4 whole wheat Tawa Rotis, steamed rice, and fresh lemon salad.',
+    price: 85,
+    config: {
+      platter: 'steel',
+      dal: 'dal-tadka',
+      sabzi: 'seasonal-sabzi',
+      bread: 'tawa-butter',
+      rice: 'steamed-rice',
+      extras: { salad: true, raita: false, gulabJamun: false }
+    }
+  },
+  {
+    id: 'royal-indulgence',
+    title: 'Maharaja Royal Feast',
+    badge: 'Chef Special',
+    icon: '👑',
+    tagline: 'Rich, creamy and celebration-worthy',
+    description: 'Royal Dal Makhani, Shahi Paneer, Garlic Naan, Jeera Rice, Boondi Raita, and 2x Hot Gulab Jamuns.',
+    price: 205,
+    config: {
+      platter: 'brass',
+      dal: 'dal-makhani',
+      sabzi: 'shahi-paneer',
+      bread: 'garlic-naan',
+      rice: 'jeera-rice',
+      extras: { salad: true, raita: true, gulabJamun: true }
+    }
+  },
+  {
+    id: 'quick-budget',
+    title: 'Student & Quick Hunger Pack',
+    badge: 'Best Value',
+    icon: '⚡',
+    tagline: 'Filling, hearty, and pocket-friendly',
+    description: 'Homestyle Dal Tadka with 4 fresh butter rotis, fragrant cumin rice, and pickled onion rings.',
+    price: 85,
+    config: {
+      platter: 'steel',
+      dal: 'dal-tadka',
+      sabzi: 'seasonal-sabzi',
+      bread: 'tawa-butter',
+      rice: 'jeera-rice',
+      extras: { salad: true, raita: false, gulabJamun: false }
+    }
+  },
+  {
+    id: 'spicy-craving',
+    title: 'Spicy North Indian Chaska',
+    badge: 'Fiery & Rich',
+    icon: '🌶️',
+    tagline: 'Bold roasted spices & flaky layered breads',
+    description: 'Peshawari Chole, Paneer Butter Masala, Flaky Lachha Paratha, Jeera Rice, and chilled Boondi Raita.',
+    price: 160,
+    config: {
+      platter: 'brass',
+      dal: 'chole',
+      sabzi: 'paneer-butter',
+      bread: 'lachha-paratha',
+      rice: 'jeera-rice',
+      extras: { salad: true, raita: true, gulabJamun: false }
+    }
+  }
+];
 
 // 3D Customizer Options
 export const THALI_CUSTOMIZER_OPTIONS = {

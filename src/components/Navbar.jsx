@@ -3,7 +3,14 @@ import { ShoppingBag, Phone, Menu, X, Volume2, VolumeX, Sparkles } from 'lucide-
 import { RESTAURANT_INFO } from '../data/menuData';
 import { useCart } from '../context/CartContext';
 
-export default function Navbar({ isAudioPlaying, onToggleAudio }) {
+export default function Navbar({
+  isAudioPlaying,
+  onToggleAudio,
+  onOpenMatcher = () => {},
+  onOpenAR = () => {},
+  onInstallPwa = () => {},
+  canInstallPwa = false,
+}) {
   const { totalCount, setIsCartOpen } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -45,21 +52,30 @@ export default function Navbar({ isAudioPlaying, onToggleAudio }) {
           </a>
 
           {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center gap-7 text-sm font-bold text-charcoal-800">
+          <div className="hidden lg:flex items-center gap-6 text-sm font-bold text-charcoal-800">
             <a href="#home" className="hover:text-crimson-600 transition-colors">
               Home
             </a>
-            <a href="#customizer" className="flex items-center gap-1.5 hover:text-crimson-600 transition-colors text-crimson-700">
-              <Sparkles className="w-3.5 h-3.5" /> 3D Thali Studio
+            <button
+              onClick={onOpenMatcher}
+              className="flex items-center gap-1.5 text-crimson-700 hover:text-crimson-600 transition-colors"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-saffron-600" /> AI Matcher
+            </button>
+            <a href="#customizer" className="hover:text-crimson-600 transition-colors">
+              3D Thali Studio
             </a>
+            <button
+              onClick={onOpenAR}
+              className="flex items-center gap-1.5 text-cardamom-700 hover:text-cardamom-600 transition-colors"
+            >
+              <span>📱 View On Table (AR)</span>
+            </button>
             <a href="#specials" className="hover:text-crimson-600 transition-colors">
               Specials
             </a>
             <a href="#menu" className="hover:text-crimson-600 transition-colors">
               Full Menu
-            </a>
-            <a href="#about" className="hover:text-crimson-600 transition-colors">
-              Why Ayanshi
             </a>
             <a href="#contact" className="hover:text-crimson-600 transition-colors">
               Contact & Map
@@ -68,6 +84,17 @@ export default function Navbar({ isAudioPlaying, onToggleAudio }) {
 
           {/* Right Action Icons */}
           <div className="flex items-center gap-3">
+            {/* Install PWA Button */}
+            {canInstallPwa && (
+              <button
+                onClick={onInstallPwa}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-saffron-500/20 text-charcoal-900 border border-saffron-500 text-xs font-bold hover:bg-saffron-500/30 transition-all"
+                title="Install app on your device"
+              >
+                <span>📲 Install App</span>
+              </button>
+            )}
+
             {/* Ambient Sound Toggle */}
             <button
               onClick={onToggleAudio}
@@ -118,13 +145,42 @@ export default function Navbar({ isAudioPlaying, onToggleAudio }) {
             >
               Home
             </a>
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenMatcher();
+              }}
+              className="w-full text-left font-bold text-crimson-700 py-2 border-b border-cream-200 flex items-center gap-2"
+            >
+              <Sparkles className="w-4 h-4 text-saffron-600" /> ✨ AI Craving Matcher
+            </button>
             <a
               href="#customizer"
               onClick={() => setMobileMenuOpen(false)}
-              className="block font-bold text-crimson-700 py-2 border-b border-cream-200 flex items-center gap-2"
+              className="block font-bold text-charcoal-800 py-2 border-b border-cream-200"
             >
-              <Sparkles className="w-4 h-4 text-saffron-600" /> 3D Thali Studio
+              3D Thali Studio
             </a>
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenAR();
+              }}
+              className="w-full text-left font-bold text-cardamom-700 py-2 border-b border-cream-200 flex items-center gap-2"
+            >
+              <span>📱 View On Your Table (AR)</span>
+            </button>
+            {canInstallPwa && (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onInstallPwa();
+                }}
+                className="w-full text-left font-bold text-saffron-700 py-2 border-b border-cream-200 flex items-center gap-2"
+              >
+                <span>📲 Install Mobile App</span>
+              </button>
+            )}
             <a
               href="#specials"
               onClick={() => setMobileMenuOpen(false)}
@@ -138,13 +194,6 @@ export default function Navbar({ isAudioPlaying, onToggleAudio }) {
               className="block font-bold text-charcoal-800 py-2 border-b border-cream-200"
             >
               Full Menu
-            </a>
-            <a
-              href="#about"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block font-bold text-charcoal-800 py-2 border-b border-cream-200"
-            >
-              Why Ayanshi
             </a>
             <a
               href="#contact"

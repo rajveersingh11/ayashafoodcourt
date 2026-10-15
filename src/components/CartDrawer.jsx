@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { X, Trash2, Plus, Minus, Send, Phone, Bike, ShoppingBag, Sparkles } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { RESTAURANT_INFO } from '../data/menuData';
+import UpiPaymentModal from './UpiPaymentModal';
 
 export default function CartDrawer() {
+  const [isUpiModalOpen, setIsUpiModalOpen] = useState(false);
   const {
     items,
     isCartOpen,
@@ -244,18 +246,26 @@ export default function CartDrawer() {
               </div>
 
               <div className="grid grid-cols-1 gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setIsUpiModalOpen(true)}
+                  className="w-full py-3 px-4 rounded-xl font-bold bg-gradient-to-r from-crimson-600 to-crimson-700 hover:from-crimson-500 hover:to-crimson-600 text-white flex items-center justify-center gap-2 shadow-md transition-all text-sm active:scale-95"
+                >
+                  <span>💳 Pay via UPI QR / GPay / PhonePe</span>
+                </button>
+
                 <a
                   href={generateWhatsAppLink()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-3 px-4 rounded-xl font-bold bg-cardamom-600 hover:bg-cardamom-500 text-white flex items-center justify-center gap-2 shadow-md transition-all text-sm active:scale-95"
+                  className="w-full py-2.5 px-4 rounded-xl font-bold bg-cardamom-600 hover:bg-cardamom-500 text-white flex items-center justify-center gap-2 shadow-sm transition-all text-xs active:scale-95"
                 >
-                  <Send className="w-4 h-4" /> Send Order on WhatsApp
+                  <Send className="w-3.5 h-3.5" /> Order via WhatsApp (COD / Pay on Delivery)
                 </a>
 
                 <a
                   href={`tel:${RESTAURANT_INFO.phone1}`}
-                  className="w-full py-2.5 px-4 rounded-xl font-bold bg-cream-200 hover:bg-cream-300 text-charcoal-800 flex items-center justify-center gap-2 text-xs transition-colors"
+                  className="w-full py-2 px-4 rounded-xl font-bold bg-cream-200 hover:bg-cream-300 text-charcoal-800 flex items-center justify-center gap-2 text-xs transition-colors"
                 >
                   <Phone className="w-3.5 h-3.5" /> Call {RESTAURANT_INFO.phone1} to Order
                 </a>
@@ -264,6 +274,18 @@ export default function CartDrawer() {
           )}
         </div>
       </div>
+
+      {/* Instant UPI Payment Modal */}
+      <UpiPaymentModal
+        isOpen={isUpiModalOpen}
+        onClose={() => setIsUpiModalOpen(false)}
+        grandTotal={grandTotal}
+        subtotal={subtotal}
+        deliveryFee={deliveryFee}
+        items={items}
+        customerDetails={customerDetails}
+        orderType={orderType}
+      />
     </div>
   );
 }

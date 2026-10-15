@@ -1,7 +1,7 @@
-import React, { useState, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, ContactShadows } from '@react-three/drei';
-import { Sparkles, Check, ShoppingBag, Send, RefreshCw } from 'lucide-react';
+import { Sparkles, Check, ShoppingBag, Send, RefreshCw, Smartphone, Eye } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import {
   ThaliPlatter,
@@ -84,7 +84,11 @@ function CustomThali3D({ config }) {
   );
 }
 
-export default function ThaliCustomizer() {
+export default function ThaliCustomizer({
+  initialConfig,
+  onOpenAR = () => {},
+  onOpenMatcher = () => {},
+}) {
   const { addToCart } = useCart();
   const [activeTab, setActiveTab] = useState('platter'); // 'platter' | 'dal' | 'sabzi' | 'bread' | 'rice' | 'extras'
 
@@ -100,6 +104,13 @@ export default function ThaliCustomizer() {
       gulabJamun: false,
     },
   });
+
+  // Sync when smart meal matcher loads an initial configuration
+  useEffect(() => {
+    if (initialConfig) {
+      setConfig(initialConfig);
+    }
+  }, [initialConfig]);
 
   const [added, setAdded] = useState(false);
 
@@ -220,6 +231,27 @@ export default function ThaliCustomizer() {
             <div className="absolute top-4 left-4 bg-cream-50/90 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-saffron-500/30 shadow-md text-xs font-bold text-charcoal-900 flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-cardamom-600 animate-pulse" />
               Live 3D Rendering
+            </div>
+
+            {/* Top Right AR and AI Matcher Actions */}
+            <div className="absolute top-4 right-4 flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={onOpenAR}
+                className="bg-cream-50/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-cardamom-600/40 shadow-md text-xs font-bold text-cardamom-800 hover:bg-cream-100 flex items-center gap-1.5 transition-all"
+                title="View on real table in Augmented Reality"
+              >
+                <span>📱 AR Table View</span>
+              </button>
+              <button
+                type="button"
+                onClick={onOpenMatcher}
+                className="bg-cream-50/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-crimson-600/40 shadow-md text-xs font-bold text-crimson-700 hover:bg-cream-100 flex items-center gap-1.5 transition-all"
+                title="AI Craving & Diet Matcher"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-saffron-600" />
+                <span>AI Matcher</span>
+              </button>
             </div>
 
             {/* Drag to inspect tip */}
