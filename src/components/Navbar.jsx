@@ -10,6 +10,7 @@ export default function Navbar({
   onOpenAR = () => {},
   onInstallPwa = () => {},
   canInstallPwa = false,
+  onOpenCatering = () => {},
 }) {
   const { totalCount, setIsCartOpen } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -70,6 +71,12 @@ export default function Navbar({
               className="flex items-center gap-1.5 text-cardamom-700 hover:text-cardamom-600 transition-colors"
             >
               <span>📱 View On Table (AR)</span>
+            </button>
+            <button
+              onClick={onOpenCatering}
+              className="flex items-center gap-1.5 text-crimson-800 hover:text-crimson-600 transition-colors"
+            >
+              <span>🏢 Bulk Catering</span>
             </button>
             <a href="#specials" className="hover:text-crimson-600 transition-colors">
               Specials
@@ -169,6 +176,15 @@ export default function Navbar({
               className="w-full text-left font-bold text-cardamom-700 py-2 border-b border-cream-200 flex items-center gap-2"
             >
               <span>📱 View On Your Table (AR)</span>
+            </button>
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenCatering();
+              }}
+              className="w-full text-left font-bold text-crimson-800 py-2 border-b border-cream-200 flex items-center gap-2"
+            >
+              <span>🏢 Bulk & Corporate Catering</span>
             </button>
             {canInstallPwa && (
               <button

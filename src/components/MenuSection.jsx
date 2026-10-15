@@ -3,7 +3,7 @@ import { Sparkles, Eye, Plus, Check, Search } from 'lucide-react';
 import { MENU_CATEGORIES, MENU_ITEMS } from '../data/menuData';
 import { useCart } from '../context/CartContext';
 
-export default function MenuSection({ onOpen3DModal }) {
+export default function MenuSection({ onOpen3DModal, overrides = {} }) {
   const { addToCart } = useCart();
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -153,26 +153,43 @@ export default function MenuSection({ onOpen3DModal }) {
         {/* Menu Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredDishes.map((dish) => {
+            const override = overrides[dish.id] || {};
+            const isSoldOut = override.isSoldOut;
+            const currentHalfPrice = override.halfPrice || dish.halfPrice;
+            const currentFullPrice = override.fullPrice || dish.fullPrice;
+            const currentBasePrice = override.price || dish.price;
+
             const selectedPortion =
-              portionSelections[dish.id] || (dish.halfPrice ? 'half' : 'standard');
+              portionSelections[dish.id] || (currentHalfPrice ? 'half' : 'standard');
             const displayPrice =
-              selectedPortion === 'half' && dish.halfPrice
-                ? dish.halfPrice
-                : selectedPortion === 'full' && dish.fullPrice
-                ? dish.fullPrice
-                : dish.price;
+              selectedPortion === 'half' && currentHalfPrice
+                ? currentHalfPrice
+                : selectedPortion === 'full' && currentFullPrice
+                ? currentFullPrice
+                : currentBasePrice;
             const isAdded = addedItems[dish.id];
 
             return (
               <div
                 key={dish.id}
-                className="bg-cream-50 rounded-2xl p-5 border border-cream-300 shadow-sm hover:shadow-warm transition-all flex flex-col justify-between group"
+                className={`rounded-2xl p-5 border transition-all flex flex-col justify-between group ${
+                  isSoldOut
+                    ? 'bg-cream-100/60 border-cream-300 opacity-75'
+                    : 'bg-cream-50 border-cream-300 shadow-sm hover:shadow-warm'
+                }`}
               >
                 <div>
                   <div className="flex items-start justify-between gap-2 mb-2">
-                    <h4 className="font-serif text-lg font-bold text-charcoal-900 group-hover:text-crimson-600 transition-colors">
-                      {dish.name}
-                    </h4>
+                    <div>
+                      <h4 className="font-serif text-lg font-bold text-charcoal-900 group-hover:text-crimson-600 transition-colors">
+                        {dish.name}
+                      </h4>
+                      {isSoldOut && (
+                        <span className="inline-block mt-0.5 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-crimson-600 text-white">
+                          Sold Out Today
+                        </span>
+                      )}
+                    </div>
                     <span className="font-serif text-lg font-extrabold text-cardamom-700 whitespace-nowrap">
                       ₹{displayPrice}
                     </span>
@@ -183,9 +200,10 @@ export default function MenuSection({ onOpen3DModal }) {
                   </p>
 
                   {/* Portion selector for curries / rice */}
-                  {dish.halfPrice && dish.fullPrice && (
+                  {currentHalfPrice && currentFullPrice && (
                     <div className="flex gap-2 mb-4">
                       <button
+                        disabled={isSoldOut}
                         onClick={() => handlePortionChange(dish.id, 'half')}
                         className={`flex-1 py-1 px-2 rounded-lg text-[11px] font-bold border transition-all ${
                           selectedPortion === 'half'
@@ -193,9 +211,10 @@ export default function MenuSection({ onOpen3DModal }) {
                             : 'border-cream-300 text-muted hover:border-cream-400'
                         }`}
                       >
-                        Half (₹{dish.halfPrice})
+                        Half (₹{currentHalfPrice})
                       </button>
                       <button
+                        disabled={isSoldOut}
                         onClick={() => handlePortionChange(dish.id, 'full')}
                         className={`flex-1 py-1 px-2 rounded-lg text-[11px] font-bold border transition-all ${
                           selectedPortion === 'full'
@@ -203,7 +222,7 @@ export default function MenuSection({ onOpen3DModal }) {
                             : 'border-cream-300 text-muted hover:border-cream-400'
                         }`}
                       >
-                        Full (₹{dish.fullPrice})
+                        Full (₹{currentFullPrice})
                       </button>
                     </div>
                   )}
@@ -213,7 +232,7 @@ export default function MenuSection({ onOpen3DModal }) {
                 <div className="flex items-center gap-2 pt-3 border-t border-cream-300">
                   {dish.has3D && (
                     <button
-                      onClick={() => onOpen3DModal(dish)}
+                      onClick={() => onOpen3DModal({ ...dish, price: currentBasePrice, halfPrice: currentHalfPrice, fullPrice: currentFullPrice })}
                       className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-saffron-500/15 hover:bg-saffron-500/25 text-crimson-800 text-xs font-bold transition-colors"
                       title="Inspect dish in 3D"
                     >
@@ -222,14 +241,19 @@ export default function MenuSection({ onOpen3DModal }) {
                   )}
 
                   <button
-                    onClick={() => handleAdd(dish)}
+                    disabled={isSoldOut}
+                    onClick={() => handleAdd({ ...dish, price: currentBasePrice, halfPrice: currentHalfPrice, fullPrice: currentFullPrice })}
                     className={`flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl font-bold text-xs shadow-sm transition-all ${
-                      isAdded
+                      isSoldOut
+                        ? 'bg-cream-300 text-muted cursor-not-allowed shadow-none'
+                        : isAdded
                         ? 'bg-cardamom-600 text-white'
                         : 'bg-crimson-600 hover:bg-crimson-500 text-white active:scale-95'
                     }`}
                   >
-                    {isAdded ? (
+                    {isSoldOut ? (
+                      'Sold Out'
+                    ) : isAdded ? (
                       <>
                         <Check className="w-3.5 h-3.5" /> Added
                       </>

@@ -2,7 +2,7 @@ import React from 'react';
 import { MapPin, Phone, Bike, Utensils, Send, Navigation } from 'lucide-react';
 import { RESTAURANT_INFO } from '../data/menuData';
 
-export default function ContactSection() {
+export default function ContactSection({ onOpenAdmin = () => {} }) {
   return (
     <footer id="contact" className="bg-gradient-to-b from-cream-200 to-cream-300 text-charcoal-900 pt-20 pb-10 px-4 md:px-8 border-t border-cream-400">
       <div className="max-w-7xl mx-auto">
@@ -115,7 +115,16 @@ export default function ContactSection() {
             <span>— Food like your home</span>
           </div>
           <div>100% Pure Vegetarian · Homestyle Cooking · Mamura Sector 66 Noida</div>
-          <div>© {new Date().getFullYear()} Ayanshi Food Court. All rights reserved.</div>
+          <div className="flex items-center gap-3">
+            <span>© {new Date().getFullYear()} Ayanshi Food Court. All rights reserved.</span>
+            <button
+              onClick={onOpenAdmin}
+              className="text-muted hover:text-crimson-600 underline text-[11px] font-medium transition-colors"
+              title="Kitchen & Management Portal (PIN protected)"
+            >
+              🔐 Kitchen Admin
+            </button>
+          </div>
         </div>
       </div>
     </footer>

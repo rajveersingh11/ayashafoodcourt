@@ -472,3 +472,53 @@ export const THALI_CUSTOMIZER_OPTIONS = {
     { id: 'gulab-jamun', name: '2x Hot Gulab Jamun', included: false, price: 40 },
   ]
 };
+
+// Corporate & Party Catering Packages
+export const CATERING_PACKAGES = [
+  {
+    id: 'standard-box',
+    name: 'Standard Office Meal Box',
+    pricePerPerson: 85,
+    tag: 'Popular for Daily Corporates',
+    desc: '4 Tawa Rotis, Yellow Dal Tadka, Seasonal Sabzi, Steamed Basmati Rice, and Fresh Salad.',
+    features: ['4x Whole Wheat Rotis', 'Dal Tadka', 'Seasonal Sabzi', 'Steamed Rice', 'Salad & Pickle'],
+    minGuests: 10,
+  },
+  {
+    id: 'executive-box',
+    name: 'Executive Deluxe Thali Box',
+    pricePerPerson: 135,
+    tag: 'Client Meetings & Events',
+    desc: '4 Butter Rotis, Dal Makhani, Shahi Paneer, Jeera Rice, Gulab Jamun, and Crisp Salad.',
+    features: ['4x Desi Butter Rotis', 'Slow-cooked Dal Makhani', 'Shahi Paneer', 'Jeera Rice', '1x Gulab Jamun', 'Salad & Chutney'],
+    minGuests: 10,
+  },
+  {
+    id: 'maharaja-buffet',
+    name: 'Maharaja Royal Party Buffet',
+    pricePerPerson: 220,
+    tag: 'Celebrations & Grand Parties',
+    desc: 'Garlic Naan & Tandoori Rotis, Dal Makhani, Paneer Butter Masala, Veg Pulao, Boondi Raita, 2x Gulab Jamun, Papad & Pickle.',
+    features: ['Tandoori Breads & Garlic Naan', 'Dal Makhani', 'Paneer Butter Masala', 'Aromatic Veg Pulao', 'Boondi Raita', '2x Gulab Jamuns', 'Papad, Pickle & Salad'],
+    minGuests: 20,
+  },
+];
+
+// Helper to get menu overrides from localStorage
+export function getMenuOverrides() {
+  try {
+    const saved = localStorage.getItem('ayanshi_menu_overrides');
+    return saved ? JSON.parse(saved) : {};
+  } catch {
+    return {};
+  }
+}
+
+// Helper to save menu overrides to localStorage
+export function saveMenuOverrides(overrides) {
+  try {
+    localStorage.setItem('ayanshi_menu_overrides', JSON.stringify(overrides));
+  } catch (e) {
+    console.error('Failed to save menu overrides:', e);
+  }
+}

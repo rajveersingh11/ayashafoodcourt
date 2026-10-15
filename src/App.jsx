@@ -12,7 +12,9 @@ import ARViewerModal from './components/3d/ARViewerModal';
 import SmartMealMatcher from './components/SmartMealMatcher';
 import AudioPlayer from './components/AudioPlayer';
 import MobileBottomNav from './components/MobileBottomNav';
-import { MENU_ITEMS } from './data/menuData';
+import AdminPortal from './components/AdminPortal';
+import CorporateCateringModal from './components/CorporateCateringModal';
+import { MENU_ITEMS, getMenuOverrides } from './data/menuData';
 
 export default function App() {
   const [active3DModalDish, setActive3DModalDish] = useState(null);
@@ -20,6 +22,9 @@ export default function App() {
   const [isAROpen, setIsAROpen] = useState(false);
   const [isMatcherOpen, setIsMatcherOpen] = useState(false);
   const [customizerConfig, setCustomizerConfig] = useState(null);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [isCateringOpen, setIsCateringOpen] = useState(false);
+  const [menuOverrides, setMenuOverrides] = useState(() => getMenuOverrides());
 
   // PWA install prompt state
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -75,12 +80,13 @@ export default function App() {
           onToggle={() => setIsAudioPlaying(!isAudioPlaying)}
         />
 
-        {/* Navigation Bar with AI Matcher, AR and PWA buttons */}
+        {/* Navigation Bar with AI Matcher, AR, Catering and PWA buttons */}
         <Navbar
           isAudioPlaying={isAudioPlaying}
           onToggleAudio={() => setIsAudioPlaying(!isAudioPlaying)}
           onOpenMatcher={() => setIsMatcherOpen(true)}
           onOpenAR={() => setIsAROpen(true)}
+          onOpenCatering={() => setIsCateringOpen(true)}
           onInstallPwa={handleInstallPwa}
           canInstallPwa={canInstallPwa}
         />
@@ -95,14 +101,17 @@ export default function App() {
           onOpenMatcher={() => setIsMatcherOpen(true)}
         />
 
-        {/* Full Categorized Menu with 3D Dish Viewers */}
-        <MenuSection onOpen3DModal={(dish) => setActive3DModalDish(dish)} />
+        {/* Full Categorized Menu with 3D Dish Viewers & Overrides */}
+        <MenuSection
+          onOpen3DModal={(dish) => setActive3DModalDish(dish)}
+          overrides={menuOverrides}
+        />
 
         {/* Why Choose Us & Food Photography */}
         <WhyUsSection />
 
         {/* Contact, Location & Google Maps */}
-        <ContactSection />
+        <ContactSection onOpenAdmin={() => setIsAdminOpen(true)} />
 
         {/* Slide-over Shopping Cart Drawer */}
         <CartDrawer />
@@ -126,6 +135,19 @@ export default function App() {
           isOpen={isMatcherOpen}
           onClose={() => setIsMatcherOpen(false)}
           onLoadTo3D={(config) => setCustomizerConfig(config)}
+        />
+
+        {/* Kitchen Admin & Stock Management Portal */}
+        <AdminPortal
+          isOpen={isAdminOpen}
+          onClose={() => setIsAdminOpen(false)}
+          onOverridesUpdated={(updated) => setMenuOverrides(updated)}
+        />
+
+        {/* Corporate & Bulk Event Catering Calculator */}
+        <CorporateCateringModal
+          isOpen={isCateringOpen}
+          onClose={() => setIsCateringOpen(false)}
         />
 
         {/* Mobile Floating Bottom Bar */}
